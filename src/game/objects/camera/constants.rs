@@ -1,3 +1,2 @@
-use bevy::prelude::*;
-
-pub(super) const OFFSET: Vec3 = Vec3::new(0.0, 2.0, 5.0);
+pub(super) const OFFSET_Y: f32 = 2.0;
+pub(super) const OFFSET_Z: f32 = 4.0;

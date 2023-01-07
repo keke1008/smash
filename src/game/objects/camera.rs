@@ -5,7 +5,7 @@ use iyes_loopless::prelude::*;
 
 use crate::{game::tags::Player, state::AppState};
 
-use self::constants::OFFSET;
+use self::constants::{OFFSET_Y, OFFSET_Z};
 
 #[derive(Debug)]
 pub(super) struct CameraPlungin;
@@ -40,7 +40,7 @@ fn follow_player(
     let Ok(player) = player.get_single() else {
         return;
     };
-    let offset = (player.back() + player.up()) * OFFSET;
+    let offset = player.up() * OFFSET_Y + player.back() * OFFSET_Z;
     let camera_translation = player.translation + offset;
     let player_translation = player.translation;
 
