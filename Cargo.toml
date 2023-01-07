@@ -12,6 +12,7 @@ bevy_rapier3d = { version = "0.19", features = [
     "wasm-bindgen",
 ] }
 iyes_loopless = "0.9"
+bevy_asset_loader = { version = "0.14", features = ["stageless"] }
 
 [profile.dev.package."*"]
 opt-level = 3

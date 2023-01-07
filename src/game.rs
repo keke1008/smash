@@ -1,12 +1,14 @@
-use bevy::prelude::*;
-
+mod assets;
 mod objects;
+
+use bevy::prelude::*;
 
 #[derive(Debug)]
 pub(super) struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(objects::ObjectsPlugin);
+        app.add_plugin(assets::GameAssetPlugin)
+            .add_plugin(objects::ObjectsPlugin);
     }
 }
