@@ -1,3 +1,4 @@
+mod game;
 mod state;
 
 use bevy::prelude::*;
@@ -20,6 +21,7 @@ struct RunAwayPlugin;
 
 impl Plugin for RunAwayPlugin {
     fn build(&self, app: &mut App) {
-        app.add_loopless_state(AppState::Loading);
+        app.add_loopless_state(AppState::Loading)
+            .add_plugin(game::GamePlugin);
     }
 }
