@@ -1,4 +1,5 @@
 mod camera;
+mod light;
 mod player;
 mod stage;
 
@@ -22,5 +23,6 @@ impl Plugin for ObjectsPlugin {
 fn setup(mut commands: Commands) {
     commands.add(stage::SpawnStage);
     commands.add(camera::SpawnCamera);
+    commands.add(light::SpawnLight);
     commands.add(player::SpawnPlayer);
 }
