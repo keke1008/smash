@@ -1,3 +1,4 @@
+mod camera;
 mod player;
 mod stage;
 
@@ -13,11 +14,13 @@ pub(super) struct ObjectsPlugin;
 
 impl Plugin for ObjectsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_enter_system(AppState::InGame, setup);
+        app.add_enter_system(AppState::InGame, setup)
+            .add_plugin(camera::CameraPlungin);
     }
 }
 
 fn setup(mut commands: Commands) {
     commands.add(stage::SpawnStage);
+    commands.add(camera::SpawnCamera);
     commands.add(player::SpawnPlayer);
 }

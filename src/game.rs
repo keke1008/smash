@@ -1,5 +1,6 @@
 mod assets;
 mod objects;
+mod tags;
 
 use bevy::prelude::*;
 
