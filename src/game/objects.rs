@@ -16,7 +16,8 @@ pub(super) struct ObjectsPlugin;
 impl Plugin for ObjectsPlugin {
     fn build(&self, app: &mut App) {
         app.add_enter_system(AppState::InGame, setup)
-            .add_plugin(camera::CameraPlungin);
+            .add_plugin(camera::CameraPlungin)
+            .add_plugin(player::PlayerPlugin);
     }
 }
 
