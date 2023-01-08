@@ -1,6 +1,6 @@
 mod constants;
 
-use bevy::{ecs::system::Command, prelude::*};
+use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
 use crate::{game::tags::Player, state::AppState};
@@ -12,19 +12,15 @@ pub(super) struct CameraPlungin;
 
 impl Plugin for CameraPlungin {
     fn build(&self, app: &mut App) {
-        app.add_system(follow_player.run_in_state(AppState::InGame));
+        app.add_enter_system(AppState::InGame, spawn_camera)
+            .add_system(follow_player.run_in_state(AppState::InGame));
     }
 }
 
-#[derive(Debug)]
-pub(super) struct SpawnCamera;
-
-impl Command for SpawnCamera {
-    fn write(self, world: &mut World) {
-        world
-            .spawn((Camera, Name::new("Camera")))
-            .insert(Camera3dBundle::default());
-    }
+fn spawn_camera(mut commands: Commands) {
+    commands
+        .spawn((Camera, Name::new("Camera")))
+        .insert(Camera3dBundle::default());
 }
 
 #[derive(Component, Debug)]
