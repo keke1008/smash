@@ -1,4 +1,5 @@
 mod assets;
+mod groups;
 mod input;
 mod objects;
 mod tags;

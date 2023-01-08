@@ -2,6 +2,7 @@ mod camera;
 mod cube;
 mod light;
 mod player;
+mod punch;
 mod stage;
 
 use bevy::prelude::*;
@@ -18,6 +19,7 @@ impl Plugin for ObjectsPlugin {
             .add_plugin(light::LightPlugin)
             .add_plugin(camera::CameraPlungin)
             .add_plugin(player::PlayerPlugin)
+            .add_plugin(punch::PunchPlugin)
             .add_plugin(cube::CubePlugin);
     }
 }

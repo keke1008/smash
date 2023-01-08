@@ -2,7 +2,13 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::KinematicCharacterController;
 use iyes_loopless::prelude::*;
 
-use crate::{game::tags::Player, state::AppState};
+use crate::{
+    game::{
+        objects::{player::constants::PUNCH_X_OFFSET, punch::SpawnPunch},
+        tags::Player,
+    },
+    state::AppState,
+};
 
 use super::{
     constants::MOVEMENT_PER_SEC,
@@ -19,6 +25,7 @@ impl Plugin for PlayerActionPlugin {
 }
 
 fn apply_action(
+    mut commands: Commands,
     mut player: Query<
         (
             &CurrentPlayerState,
@@ -41,7 +48,14 @@ fn apply_action(
             controller.translation = Some(translation);
         }
         state @ (LeftPunch | RightPunch) if *previous_state != state => {
-            info!("Punch");
+            let diff = match state {
+                LeftPunch => transform.left() * PUNCH_X_OFFSET,
+                RightPunch => transform.right() * PUNCH_X_OFFSET,
+                _ => unreachable!(),
+            };
+            commands.add(SpawnPunch {
+                transform: transform.with_translation(transform.translation + diff),
+            });
         }
         _ => {}
     }

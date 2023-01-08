@@ -13,7 +13,10 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
-use crate::{game::tags::Player, state::AppState};
+use crate::{
+    game::{groups, tags::Player},
+    state::AppState,
+};
 
 use self::{
     constants::{COLLIDER_HALF_HEIGHT, COLLIDER_RADIUS, INITIAL_TRANSLATION},
@@ -34,6 +37,8 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands, assets: Res<PlayerAssets>) {
+    const GROUPS: CollisionGroups = CollisionGroups::new(groups::PLAYER, groups::ALL);
+
     commands
         .spawn((Player, Name::new("Player")))
         .insert(CurrentPlayerState::default())
@@ -41,7 +46,11 @@ fn spawn_player(mut commands: Commands, assets: Res<PlayerAssets>) {
             RigidBody::Dynamic,
             LockedAxes::ROTATION_LOCKED,
             Collider::cylinder(COLLIDER_HALF_HEIGHT, COLLIDER_RADIUS),
-            KinematicCharacterController::default(),
+            GROUPS,
+            KinematicCharacterController {
+                filter_groups: Some(GROUPS.into()),
+                ..default()
+            },
             SpatialBundle::from_transform(Transform::from_translation(INITIAL_TRANSLATION)),
         ))
         .with_children(|builder| {
