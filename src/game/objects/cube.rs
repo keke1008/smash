@@ -9,7 +9,9 @@ use iyes_loopless::prelude::*;
 
 use crate::state::AppState;
 
-use self::constants::{DENSITY_METAL, DENSITY_STONE, DENSITY_WOODEN, HALF_SIZE, MIN_HEIGHT};
+use self::constants::{
+    DENSITY_METAL, DENSITY_STONE, DENSITY_WOODEN, FRICTION, HALF_SIZE, MIN_HEIGHT,
+};
 
 #[derive(Debug)]
 pub(super) struct CubePlugin;
@@ -36,6 +38,7 @@ impl Command for SpawnCube {
                     RigidBody::Dynamic,
                     Collider::cuboid(HALF_SIZE, HALF_SIZE, HALF_SIZE),
                     ColliderMassProperties::Density(self.cube_type.density()),
+                    Friction::new(FRICTION),
                     SpatialBundle::from_transform(Transform::from_translation(self.position)),
                 ))
                 .with_children(|builder| {

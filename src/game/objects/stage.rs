@@ -5,6 +5,8 @@ use iyes_loopless::prelude::*;
 
 use crate::state::AppState;
 
+use self::constants::FRICTION;
+
 mod constants;
 
 #[derive(Debug)]
@@ -33,8 +35,11 @@ fn spawn_stage(
 
     commands
         .spawn(Name::new("Ground"))
-        .insert(RigidBody::Fixed)
-        .insert(Collider::cuboid(HALF_WIDTH, HALF_THICKNESS, HALF_DEPTH))
+        .insert((
+            RigidBody::Fixed,
+            Collider::cuboid(HALF_WIDTH, HALF_THICKNESS, HALF_DEPTH),
+            Friction::new(FRICTION),
+        ))
         .insert(PbrBundle {
             mesh,
             material,
