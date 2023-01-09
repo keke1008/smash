@@ -2729,7 +2729,9 @@ dependencies = [
  "bevy_asset_loader",
  "bevy_rapier3d",
  "iyes_loopless",
+ "js-sys",
  "rand",
+ "wasm-bindgen",
 ]
 
 [[package]]
