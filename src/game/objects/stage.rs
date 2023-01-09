@@ -3,7 +3,7 @@ use bevy_rapier3d::prelude::*;
 use constants::{COLOR, HALF_DEPTH, HALF_THICKNESS, HALF_WIDTH};
 use iyes_loopless::prelude::*;
 
-use crate::state::AppState;
+use crate::{game::tags::Ground, state::AppState};
 
 use self::constants::FRICTION;
 
@@ -34,7 +34,7 @@ fn spawn_stage(
     });
 
     commands
-        .spawn(Name::new("Ground"))
+        .spawn((Name::new("Ground"), Ground))
         .insert((
             RigidBody::Fixed,
             Collider::cuboid(HALF_WIDTH, HALF_THICKNESS, HALF_DEPTH),

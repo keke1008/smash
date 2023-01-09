@@ -7,10 +7,11 @@ use bevy::{ecs::system::Command, prelude::*};
 use bevy_rapier3d::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::state::AppState;
+use crate::{game::tags::Ground, state::AppState};
 
 use self::constants::{
     DENSITY_METAL, DENSITY_STONE, DENSITY_WOODEN, FRICTION, HALF_SIZE, MIN_HEIGHT, MODEL_SCALE,
+    MOVEMENT_PER_SEC,
 };
 
 #[derive(Debug)]
@@ -18,7 +19,13 @@ pub(super) struct CubePlugin;
 
 impl Plugin for CubePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(kill.run_in_state(AppState::InGame));
+        app.add_system_set(
+            ConditionSet::new()
+                .run_in_state(AppState::InGame)
+                .with_system(movement)
+                .with_system(kill)
+                .into(),
+        );
     }
 }
 
@@ -39,6 +46,7 @@ impl Command for SpawnCube {
                     Collider::cuboid(HALF_SIZE, HALF_SIZE, HALF_SIZE),
                     ColliderMassProperties::Density(self.cube_type.density()),
                     Friction::new(FRICTION),
+                    KinematicCharacterController::default(),
                     SpatialBundle::from_transform(Transform::from_translation(self.position)),
                 ))
                 .with_children(|builder| {
@@ -89,5 +97,25 @@ fn kill(mut commands: Commands, cubes: Query<(Entity, &Transform), With<Cube>>) 
         if transform.translation.y < MIN_HEIGHT {
             commands.entity(cube_entity).despawn_recursive();
         }
+    }
+}
+
+fn movement(
+    mut cubes: Query<(Entity, &mut KinematicCharacterController), With<Cube>>,
+    ground: Query<Entity, With<Ground>>,
+    rapier_context: Res<RapierContext>,
+    time: Res<Time>,
+) {
+    let Ok(ground_entity) = ground.get_single() else {
+        return;
+    };
+
+    for (cube_entity, mut controller) in cubes.iter_mut() {
+        if let Some(view) = rapier_context.contact_pair(ground_entity, cube_entity) {
+            if view.raw.has_any_active_contact {
+                controller.translation =
+                    Some(Vec3::new(0.0, 0.0, MOVEMENT_PER_SEC * time.delta_seconds()));
+            }
+        };
     }
 }
