@@ -10,7 +10,7 @@ use iyes_loopless::prelude::*;
 use crate::state::AppState;
 
 use self::constants::{
-    DENSITY_METAL, DENSITY_STONE, DENSITY_WOODEN, FRICTION, HALF_SIZE, MIN_HEIGHT,
+    DENSITY_METAL, DENSITY_STONE, DENSITY_WOODEN, FRICTION, HALF_SIZE, MIN_HEIGHT, MODEL_SCALE,
 };
 
 #[derive(Debug)]
@@ -44,6 +44,8 @@ impl Command for SpawnCube {
                 .with_children(|builder| {
                     builder.spawn(SceneBundle {
                         scene: scene_handle,
+                        transform: Transform::from_scale(Vec3::splat(MODEL_SCALE)),
+
                         ..default()
                     });
                 });
