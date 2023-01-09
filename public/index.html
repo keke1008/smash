@@ -6,14 +6,17 @@
     <link data-trunk rel="copy-dir" href="assets/" />
     <link data-trunk rel="copy-dir" href="js/" />
     <link data-trunk rel="copy-dir" href="models/" />
+    <link data-trunk rel="css" href="style.css" />
 </head>
 
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8.3/dist/teachablemachine-pose.min.js"></script>
-    <div>
-        <canvas id="camera" />
+    <div id="canvas-wrap">
         <canvas id="canvas" />
+    </div>
+    <div id="camera-wrap">
+        <canvas id="camera" />
     </div>
 </body>
 

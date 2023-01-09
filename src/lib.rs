@@ -9,7 +9,14 @@ use self::state::AppState;
 
 pub fn run_app() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                canvas: Some("#canvas".into()),
+                fit_canvas_to_parent: true,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(RunAwayPlugin)
