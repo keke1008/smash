@@ -23,9 +23,9 @@ impl Plugin for CubePlugin {
 }
 
 #[derive(Debug)]
-pub(super) struct SpawnCube {
-    pub(super) cube_type: CubeType,
-    pub(super) position: Vec3,
+pub(in crate::game) struct SpawnCube {
+    pub(in crate::game) cube_type: CubeType,
+    pub(in crate::game) position: Vec3,
 }
 
 impl Command for SpawnCube {
@@ -53,8 +53,8 @@ impl Command for SpawnCube {
     }
 }
 
-#[derive(Debug)]
-pub(super) enum CubeType {
+#[derive(Debug, Clone, Copy)]
+pub(in crate::game) enum CubeType {
     Wooden,
     Stone,
     Metal,

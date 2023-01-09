@@ -7,7 +7,7 @@ mod stage;
 
 use bevy::prelude::*;
 
-pub(in crate::game) use self::cube::CubeAssets;
+pub(in crate::game) use self::cube::{CubeAssets, CubeType, SpawnCube};
 pub(in crate::game) use self::player::PlayerAssets;
 
 #[derive(Debug)]
