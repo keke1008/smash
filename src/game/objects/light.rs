@@ -5,7 +5,7 @@ use iyes_loopless::prelude::*;
 
 use crate::state::AppState;
 
-use self::constants::{ILLUMINANCE, LOOKING_AT, SHADOWS_ENABLED, TRANSLATION};
+use self::constants::{BRIGHTNESS, COLOR, ILLUMINANCE, LOOKING_AT, SHADOWS_ENABLED, TRANSLATION};
 
 #[derive(Debug)]
 pub(super) struct LightPlugin;
@@ -25,5 +25,10 @@ fn spawn_light(mut commands: Commands) {
             ..default()
         },
         ..default()
+    });
+
+    commands.insert_resource(AmbientLight {
+        color: COLOR,
+        brightness: BRIGHTNESS,
     });
 }
