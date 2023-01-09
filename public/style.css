@@ -4,8 +4,8 @@ body {
 
 #camera-wrap {
     position: absolute;
-    width: 100vw;
-    height: 100vh;
+    width: auto;
+    height: auto;
     z-index: 1;
 }
 
