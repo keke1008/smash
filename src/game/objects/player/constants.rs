@@ -8,3 +8,5 @@ pub(super) const COLLIDER_HALF_HEIGHT: f32 = 0.8;
 pub(super) const ROTATION_PER_SEC: f32 = PI / 2.0;
 pub(super) const MOVEMENT_PER_SEC: f32 = 4.0;
 pub(super) const PUNCH_X_OFFSET: f32 = 0.2;
+pub(super) const DENSITY: f32 = 1000.0;
+pub(super) const FRICTION: f32 = 1.0;

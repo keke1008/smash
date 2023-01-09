@@ -14,7 +14,11 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
 use crate::{
-    game::{groups, tags::Player},
+    game::{
+        groups,
+        objects::player::constants::{DENSITY, FRICTION},
+        tags::Player,
+    },
     state::AppState,
 };
 
@@ -46,9 +50,15 @@ fn spawn_player(mut commands: Commands, assets: Res<PlayerAssets>) {
             RigidBody::Dynamic,
             LockedAxes::ROTATION_LOCKED,
             Collider::cylinder(COLLIDER_HALF_HEIGHT, COLLIDER_RADIUS),
+            ColliderMassProperties::Density(DENSITY),
+            Friction {
+                coefficient: FRICTION,
+                combine_rule: CoefficientCombineRule::Max,
+            },
             GROUPS,
             KinematicCharacterController {
                 filter_groups: Some(GROUPS.into()),
+                slide: false,
                 ..default()
             },
             SpatialBundle::from_transform(Transform::from_translation(INITIAL_TRANSLATION)),
