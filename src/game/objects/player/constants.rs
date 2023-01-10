@@ -10,3 +10,5 @@ pub(super) const MOVEMENT_PER_SEC: f32 = 4.0;
 pub(super) const PUNCH_X_OFFSET: f32 = 0.2;
 pub(super) const DENSITY: f32 = 1000.0;
 pub(super) const FRICTION: f32 = 1.0;
+
+pub(super) const MIN_HEIGHT: f32 = 0.0;

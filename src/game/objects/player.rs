@@ -23,7 +23,7 @@ use crate::{
 };
 
 use self::{
-    constants::{COLLIDER_HALF_HEIGHT, COLLIDER_RADIUS, INITIAL_TRANSLATION},
+    constants::{COLLIDER_HALF_HEIGHT, COLLIDER_RADIUS, INITIAL_TRANSLATION, MIN_HEIGHT},
     state::CurrentPlayerState,
 };
 
@@ -36,7 +36,8 @@ impl Plugin for PlayerPlugin {
             .add_plugin(event::PlayerEventPlugin)
             .add_plugin(action::PlayerActionPlugin)
             .add_plugin(animation::PlayerAnimationPlugin)
-            .add_enter_system(AppState::InGame, spawn_player);
+            .add_enter_system(AppState::InGame, spawn_player)
+            .add_system(despawn.run_in_state(AppState::InGame));
     }
 }
 
@@ -71,4 +72,15 @@ fn spawn_player(mut commands: Commands, assets: Res<PlayerAssets>) {
                 ..default()
             });
         });
+}
+
+fn despawn(mut commands: Commands, player: Query<(Entity, &Transform), With<Player>>) {
+    let Ok((player_entity, transform)) = player.get_single() else {
+        return;
+    };
+
+    if transform.translation.y < MIN_HEIGHT {
+        commands.entity(player_entity).despawn_recursive();
+        commands.insert_resource(NextState(crate::game::state::PlayerState::Dead));
+    }
 }
