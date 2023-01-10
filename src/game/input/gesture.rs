@@ -14,17 +14,61 @@ pub(super) struct GestureInputPlugin;
 
 impl Plugin for GestureInputPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(handle_predictions.run_in_state(AppState::InGame));
+        app.add_enter_system(AppState::InGame, setup)
+            .add_exit_system(AppState::InGame, despawn)
+            .add_system(update_event.run_in_state(AppState::InGame).label("update"))
+            .add_system_set(
+                ConditionSet::new()
+                    .run_in_state(AppState::InGame)
+                    .after("update")
+                    .with_system(send_movement_event)
+                    .with_system(send_attack_event)
+                    .with_system(send_rotation_event)
+                    .into(),
+            );
     }
 }
 
-fn handle_predictions(
-    mut previous_movement_event: Local<Option<PlayerMovementEvent>>,
-    mut previpus_attack_event: Local<Option<PlayerAttackEvent>>,
-    mut previous_rotation_event: Local<Option<PlayerRotationEvent>>,
-    mut movement_tx: EventWriter<PlayerMovementEvent>,
-    mut attack_tx: EventWriter<PlayerAttackEvent>,
-    mut rotation_tx: EventWriter<PlayerRotationEvent>,
+fn setup(mut commands: Commands) {
+    commands.insert_resource(EventTransition::<Option<PlayerMovementEvent>>::default());
+    commands.insert_resource(EventTransition::<Option<PlayerAttackEvent>>::default());
+    commands.insert_resource(EventTransition::<Option<PlayerRotationEvent>>::default());
+}
+
+fn despawn(mut commands: Commands) {
+    commands.remove_resource::<EventTransition<Option<PlayerMovementEvent>>>();
+    commands.remove_resource::<EventTransition<Option<PlayerAttackEvent>>>();
+    commands.remove_resource::<EventTransition<Option<PlayerRotationEvent>>>();
+}
+
+#[derive(Resource, Debug, Default)]
+struct EventTransition<E> {
+    current: E,
+    previous: Option<E>,
+}
+
+impl<E: PartialEq + Copy> EventTransition<E> {
+    fn push(&mut self, event: E) {
+        if self.current == event {
+            return;
+        }
+        let previous = std::mem::replace(&mut self.current, event);
+        self.previous = Some(previous);
+    }
+
+    fn take_change(&mut self) -> Option<E> {
+        self.previous.take()
+    }
+
+    fn current(&self) -> E {
+        self.current
+    }
+}
+
+fn update_event(
+    mut movement: ResMut<EventTransition<Option<PlayerMovementEvent>>>,
+    mut attack: ResMut<EventTransition<Option<PlayerAttackEvent>>>,
+    mut rotation: ResMut<EventTransition<Option<PlayerRotationEvent>>>,
 ) {
     if let Some(movement_prediction) = js::get_movement_prediction() {
         use MovementPrediction::*;
@@ -34,36 +78,50 @@ fn handle_predictions(
             LeftPunch => (None, Some(PlayerAttackEvent::LeftPunch)),
             RightPunch => (None, Some(PlayerAttackEvent::RightPunch)),
         };
-
-        if movement_event != *previous_movement_event || movement_event.is_some() {
-            *previous_movement_event = movement_event.clone();
-            if let Some(event) = movement_event {
-                movement_tx.send(event);
-            }
-        }
-
-        if attack_event != *previpus_attack_event {
-            *previpus_attack_event = attack_event.clone();
-            if let Some(event) = attack_event {
-                attack_tx.send(event);
-            }
-        }
-    } else if let Some(event) = previous_movement_event.clone() {
-        movement_tx.send(event);
+        movement.push(movement_event);
+        attack.push(attack_event);
     }
 
-    let event = if let Some(rotation_prediction) = js::get_rotation_prediction() {
+    if let Some(rotation_prediction) = js::get_rotation_prediction() {
+        info!("{rotation_prediction:?}");
         use RotationPrediction::*;
-        match rotation_prediction {
+        let rotation_event = match rotation_prediction {
             Stay => None,
             RotateLeft => Some(PlayerRotationEvent::Left),
             RotateRight => Some(PlayerRotationEvent::Right),
-        }
+        };
+        rotation.push(rotation_event);
+    }
+}
+
+fn send_movement_event(
+    mut movement: ResMut<EventTransition<Option<PlayerMovementEvent>>>,
+    mut movement_tx: EventWriter<PlayerMovementEvent>,
+) {
+    let event = if let Some(Some(event)) = movement.take_change() {
+        event
+    } else if movement.current() == Some(PlayerMovementEvent::MoveForward) {
+        PlayerMovementEvent::MoveForward
     } else {
-        previous_rotation_event.clone()
+        return;
     };
-    *previous_rotation_event = event.clone();
-    if let Some(event) = event {
+    movement_tx.send(event);
+}
+
+fn send_attack_event(
+    mut attack: ResMut<EventTransition<Option<PlayerAttackEvent>>>,
+    mut attack_tx: EventWriter<PlayerAttackEvent>,
+) {
+    if let Some(Some(event)) = attack.take_change() {
+        attack_tx.send(event);
+    }
+}
+
+fn send_rotation_event(
+    rotation: ResMut<EventTransition<Option<PlayerRotationEvent>>>,
+    mut rotation_tx: EventWriter<PlayerRotationEvent>,
+) {
+    if let Some(event) = rotation.current() {
         rotation_tx.send(event);
     }
 }
