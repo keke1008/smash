@@ -4,7 +4,7 @@ use bevy::{ecs::system::Command, prelude::*};
 use bevy_rapier3d::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::{game::groups, state::AppState};
+use crate::{game::groups, state::AppState, utils::despawn_recursive};
 
 use self::constants::{COLLIDER_RADIUS, DENSITY, MOVEMENT_PER_SEC, RANGE};
 
@@ -13,7 +13,8 @@ pub(super) struct PunchPlugin;
 
 impl Plugin for PunchPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(update.run_in_state(AppState::InGame));
+        app.add_system(update.run_in_state(AppState::InGame))
+            .add_exit_system(AppState::InGame, despawn_recursive::<Punch>);
     }
 }
 

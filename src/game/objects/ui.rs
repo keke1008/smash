@@ -24,5 +24,5 @@ impl Plugin for GameUiPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    commands.init_resource::<Elapsed>();
+    commands.insert_resource(Elapsed::default());
 }

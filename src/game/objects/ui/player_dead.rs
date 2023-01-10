@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::{game::state::PlayerState, state::AppState};
+use crate::{game::state::PlayerState, state::AppState, utils::despawn_recursive};
 
 use super::{
     assets::UiAssets,
@@ -17,7 +17,7 @@ pub(super) struct PlayerDeadUiPlugin;
 impl Plugin for PlayerDeadUiPlugin {
     fn build(&self, app: &mut App) {
         app.add_enter_system(PlayerState::Dead, setup)
-            .add_exit_system(PlayerState::Dead, despawn)
+            .add_exit_system(PlayerState::Dead, despawn_recursive::<UiRoot>)
             .add_system(update.run_in_state(PlayerState::Dead));
     }
 }
@@ -110,11 +110,4 @@ fn update(
         Interaction::Hovered => *background_color = BUTTON_HOVERED.into(),
         Interaction::None => *background_color = BUTTON_NORMAL.into(),
     }
-}
-
-fn despawn(mut commands: Commands, ui_root: Query<Entity, With<UiRoot>>) {
-    let Ok(ui_root) = ui_root.get_single() else {
-        return;
-    };
-    commands.entity(ui_root).despawn_recursive();
 }

@@ -7,7 +7,7 @@ use bevy::{ecs::system::Command, prelude::*};
 use bevy_rapier3d::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::{game::tags::Ground, state::AppState};
+use crate::{game::tags::Ground, state::AppState, utils::despawn_recursive};
 
 use self::constants::{
     DENSITY_METAL, DENSITY_STONE, DENSITY_WOODEN, FRICTION, HALF_SIZE, MIN_HEIGHT, MODEL_SCALE,
@@ -19,13 +19,14 @@ pub(super) struct CubePlugin;
 
 impl Plugin for CubePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
-            ConditionSet::new()
-                .run_in_state(AppState::InGame)
-                .with_system(movement)
-                .with_system(kill)
-                .into(),
-        );
+        app.add_exit_system(AppState::InGame, despawn_recursive::<Cube>)
+            .add_system_set(
+                ConditionSet::new()
+                    .run_in_state(AppState::InGame)
+                    .with_system(movement)
+                    .with_system(kill)
+                    .into(),
+            );
     }
 }
 

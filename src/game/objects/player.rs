@@ -20,6 +20,7 @@ use crate::{
         tags::Player,
     },
     state::AppState,
+    utils::despawn_recursive,
 };
 
 use self::{
@@ -37,6 +38,7 @@ impl Plugin for PlayerPlugin {
             .add_plugin(action::PlayerActionPlugin)
             .add_plugin(animation::PlayerAnimationPlugin)
             .add_enter_system(AppState::InGame, spawn_player)
+            .add_exit_system(AppState::InGame, despawn_recursive::<Player>)
             .add_system(despawn.run_in_state(AppState::InGame));
     }
 }

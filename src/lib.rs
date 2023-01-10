@@ -1,5 +1,6 @@
 mod game;
 mod state;
+mod utils;
 
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;

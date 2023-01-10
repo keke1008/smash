@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::game::state::PlayerState;
+use crate::{game::state::PlayerState, utils::despawn_recursive};
 
 use super::{
     assets::UiAssets,
@@ -15,7 +15,7 @@ pub(super) struct PlayerLivingUiPlugin;
 impl Plugin for PlayerLivingUiPlugin {
     fn build(&self, app: &mut App) {
         app.add_enter_system(PlayerState::Living, setup)
-            .add_exit_system(PlayerState::Living, despawn)
+            .add_exit_system(PlayerState::Living, despawn_recursive::<UiRoot>)
             .add_system(update.run_in_state(PlayerState::Living));
     }
 }
@@ -66,11 +66,4 @@ fn update(
         elapsed.increment();
         text.sections[0].value = elapsed.get().to_string();
     }
-}
-
-fn despawn(mut commands: Commands, query: Query<Entity, With<UiRoot>>) {
-    let Ok(ui_entity) = query.get_single() else {
-        return;
-    };
-    commands.entity(ui_entity).despawn_recursive();
 }

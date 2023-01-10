@@ -3,7 +3,7 @@ mod constants;
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::{game::tags::Player, state::AppState};
+use crate::{game::tags::Player, state::AppState, utils::despawn_recursive};
 
 use self::constants::{OFFSET_Y, OFFSET_Z};
 
@@ -13,6 +13,7 @@ pub(super) struct CameraPlungin;
 impl Plugin for CameraPlungin {
     fn build(&self, app: &mut App) {
         app.add_enter_system(AppState::InGame, spawn_camera)
+            .add_exit_system(AppState::InGame, despawn_recursive::<Camera>)
             .add_system(follow_player.run_in_state(AppState::InGame));
     }
 }

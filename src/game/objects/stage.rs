@@ -3,7 +3,7 @@ use bevy_rapier3d::prelude::*;
 use constants::{COLOR, HALF_DEPTH, HALF_THICKNESS, HALF_WIDTH};
 use iyes_loopless::prelude::*;
 
-use crate::{game::tags::Ground, state::AppState};
+use crate::{game::tags::Ground, state::AppState, utils::despawn_recursive};
 
 use self::constants::FRICTION;
 
@@ -14,7 +14,8 @@ pub(super) struct StagePlugin;
 
 impl Plugin for StagePlugin {
     fn build(&self, app: &mut App) {
-        app.add_enter_system(AppState::InGame, spawn_stage);
+        app.add_enter_system(AppState::InGame, spawn_stage)
+            .add_exit_system(AppState::InGame, despawn_recursive::<Ground>);
     }
 }
 

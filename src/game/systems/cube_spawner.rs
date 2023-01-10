@@ -36,7 +36,7 @@ impl Plugin for CubeSpawnerPlugin {
 struct GameTime(Stopwatch);
 
 fn setup(mut commands: Commands) {
-    commands.init_resource::<GameTime>();
+    commands.insert_resource(GameTime::default());
 }
 
 fn update(mut game_time: ResMut<GameTime>, time: Res<Time>) {
