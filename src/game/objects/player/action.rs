@@ -43,6 +43,9 @@ fn apply_action(
 
     use PlayerState::*;
     match current_state.get() {
+        Stay => {
+            controller.translation = Some(Vec3::ZERO);
+        }
         Run => {
             let translation = transform.forward() * MOVEMENT_PER_SEC * time.delta_seconds();
             controller.translation = Some(translation);

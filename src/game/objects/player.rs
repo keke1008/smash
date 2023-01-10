@@ -61,6 +61,7 @@ fn spawn_player(mut commands: Commands, assets: Res<PlayerAssets>) {
             GROUPS,
             KinematicCharacterController {
                 filter_groups: Some(GROUPS.into()),
+                custom_mass: Some(DENSITY),
                 slide: false,
                 ..default()
             },
