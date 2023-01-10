@@ -4,7 +4,7 @@ mod spawn_control;
 use bevy::prelude::*;
 use iyes_loopless::prelude::*;
 
-use crate::state::AppState;
+use crate::{game::state::PlayerState, state::AppState};
 
 use self::{
     constants::{MetalCube, SpawnableCubes, StoneCube, WoodenCube},
@@ -21,6 +21,7 @@ impl Plugin for CubeSpawnerPlugin {
             .add_system_set(
                 ConditionSet::new()
                     .run_in_state(AppState::InGame)
+                    .run_in_state(PlayerState::Living)
                     .with_system(update::<WoodenCube>)
                     .with_system(update::<StoneCube>)
                     .with_system(update::<MetalCube>)
