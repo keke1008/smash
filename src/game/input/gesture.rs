@@ -44,20 +44,22 @@ fn despawn(mut commands: Commands) {
 #[derive(Resource, Debug, Default)]
 struct EventTransition<E> {
     current: E,
-    previous: Option<E>,
+    just_changed: bool,
 }
 
 impl<E: PartialEq + Copy> EventTransition<E> {
     fn push(&mut self, event: E) {
-        if self.current == event {
-            return;
-        }
-        let previous = std::mem::replace(&mut self.current, event);
-        self.previous = Some(previous);
+        self.just_changed = self.current != event;
+        self.current = event;
     }
 
     fn take_change(&mut self) -> Option<E> {
-        self.previous.take()
+        if self.just_changed {
+            self.just_changed = false;
+            Some(self.current)
+        } else {
+            None
+        }
     }
 
     fn current(&self) -> E {
@@ -83,7 +85,6 @@ fn update_event(
     }
 
     if let Some(rotation_prediction) = js::get_rotation_prediction() {
-        info!("{rotation_prediction:?}");
         use RotationPrediction::*;
         let rotation_event = match rotation_prediction {
             Stay => None,
