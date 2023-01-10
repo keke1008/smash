@@ -1,3 +1,3 @@
 fn main() {
-    run_away::run_app();
+    smash::run_app();
 }

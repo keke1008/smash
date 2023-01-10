@@ -20,14 +20,14 @@ pub fn run_app() {
         }))
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugin(RapierDebugRenderPlugin::default())
-        .add_plugin(RunAwayPlugin)
+        .add_plugin(AppPlugin)
         .run();
 }
 
 #[derive(Debug, Default)]
-struct RunAwayPlugin;
+struct AppPlugin;
 
-impl Plugin for RunAwayPlugin {
+impl Plugin for AppPlugin {
     fn build(&self, app: &mut App) {
         app.add_loopless_state(AppState::Loading)
             .add_plugin(game::GamePlugin);
