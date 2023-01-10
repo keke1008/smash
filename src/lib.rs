@@ -19,7 +19,6 @@ pub fn run_app() {
             ..default()
         }))
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-        .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(AppPlugin)
         .run();
 }
