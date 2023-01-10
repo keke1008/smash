@@ -43,7 +43,7 @@ fn setup(mut commands: Commands, assets: Res<UiAssets>) {
             builder
                 .spawn(UiTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
                 .insert(TextBundle::from_section(
-                    "",
+                    "0",
                     TextStyle {
                         font: assets.font.clone_weak(),
                         font_size: FONT_SIZE_REGULAR,
